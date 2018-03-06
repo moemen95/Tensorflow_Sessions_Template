@@ -2,7 +2,6 @@ import tensorflow as tf
 
 
 class Cifar:
-
     def __init__(self, config):
         self.config = config
 
