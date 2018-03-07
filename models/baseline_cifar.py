@@ -5,6 +5,12 @@ class BaselineCifar:
     def __init__(self, config):
         self.config = config
 
+    def init_helper_variables(self):
+        self.global_step_tensor = tf.Variable(0, trainable=False, name='global_step')
+        self.global_step_inc = self.global_step_tensor.assign(self.global_step_tensor + 1)
+        self.global_epoch_tensor = tf.Variable(0, trainable=False, name='global_epoch')
+        self.global_epoch_inc = self.global_epoch_tensor.assign(self.global_epoch_tensor + 1)
+
     def init_input(self, x, y):
         with tf.variable_scope('inputs'):
             self.is_training = tf.placeholder(tf.bool, name='Training_flag')
@@ -17,14 +23,14 @@ class BaselineCifar:
 
     def init_network(self):
         with tf.variable_scope('network'):
-            conv1 = Cifar.conv_bn_relu('conv1_block', self.x, 16, (3, 3), self.is_training)
-            conv2 = Cifar.conv_bn_relu('conv2_block', conv1, 32, (3, 3), self.is_training)
+            conv1 = BaselineCifar.conv_bn_relu('conv1_block', self.x, 16, (3, 3), self.is_training)
+            conv2 = BaselineCifar.conv_bn_relu('conv2_block', conv1, 32, (3, 3), self.is_training)
 
             with tf.variable_scope('max_pool1'):
                 max_pool1 = tf.layers.max_pooling2d(conv2, pool_size=(2, 2), strides=(2, 2), name='max_pool')
 
-            conv3 = Cifar.conv_bn_relu('conv3_block', max_pool1, 32, (3, 3), self.is_training)
-            conv4 = Cifar.conv_bn_relu('conv4_block', conv3, 32, (3, 3), self.is_training)
+            conv3 = BaselineCifar.conv_bn_relu('conv3_block', max_pool1, 32, (3, 3), self.is_training)
+            conv4 = BaselineCifar.conv_bn_relu('conv4_block', conv3, 32, (3, 3), self.is_training)
 
             with tf.variable_scope('max_pool2'):
                 max_pool2 = tf.layers.max_pooling2d(conv4, pool_size=(2, 2), strides=(2, 2), name='max_pool')
@@ -32,8 +38,8 @@ class BaselineCifar:
             with tf.variable_scope('flatten'):
                 flattened = tf.layers.flatten(max_pool2, name='flatten')
 
-            dense1 = Cifar.dense_bn_relu_dropout('dense1', flattened, 512, 0.5, self.is_training)
-            dense2 = Cifar.dense_bn_relu_dropout('dense2', dense1, 256, 0.3, self.is_training)
+            dense1 = BaselineCifar.dense_bn_relu_dropout('dense1', flattened, 512, 0.5, self.is_training)
+            dense2 = BaselineCifar.dense_bn_relu_dropout('dense2', dense1, 256, 0.3, self.is_training)
 
             with tf.variable_scope('out'):
                 self.out = tf.layers.dense(dense2, self.config.num_classes,

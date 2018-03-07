@@ -28,12 +28,14 @@ class DefinedSummarizer:
         with tf.variable_scope('summary_ops'):
             if self.scalar_tags is not None:
                 for tag in self.scalar_tags:
-                    pass
-                    # TODO
+                    self.summary_tags += [tag]
+                    self.summary_placeholders[tag] = tf.placeholder('float32', None, name=tag)
+                    self.summary_ops[tag] = tf.summary.scalar(tag, self.summary_placeholders[tag])
             if self.images_tags is not None:
                 for tag, shape in self.images_tags:
-                    pass
-                    # TODO
+                    self.summary_tags += [tag]
+                    self.summary_placeholders[tag] = tf.placeholder('float32', shape, name=tag)
+                    self.summary_ops[tag] = tf.summary.image(tag, self.summary_placeholders[tag], max_outputs=10)
 
     def summarize(self, step, summaries_dict=None, summaries_merged=None):
         """
@@ -44,12 +46,13 @@ class DefinedSummarizer:
         :return:
         """
         if summaries_dict is not None:
-            # TODO
-            pass
+            summary_list = self.sess.run([self.summary_ops[tag] for tag in summaries_dict.keys()],
+                                         {self.summary_placeholders[tag]: value for tag, value in
+                                          summaries_dict.items()})
+            for summary in summary_list:
+                self.summary_writer.add_summary(summary, step)
         if summaries_merged is not None:
-            # TODO
-            pass
+            self.summary_writer.add_summary(summaries_merged, step)
 
     def finalize(self):
-        pass
-    # TODO
+        self.summary_writer.flush()

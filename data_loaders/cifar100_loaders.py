@@ -144,21 +144,32 @@ class Cifar100TFRecord:
     def __init__(self, config):
         self.config = config
 
-        # TODO
         # initialize the dataset
+        self.dataset = tf.data.TFRecordDataset(self.config.tfrecord_data)
+        self.dataset = self.dataset.map(Cifar100TFRecord.parser, num_parallel_calls=self.config.batch_size)
+        self.dataset = self.dataset.shuffle(1000)
+        self.dataset = self.dataset.batch(self.config.batch_size)
 
-        # self.iterator = tf.data.Iterator.from_structure(dataset.output_types,
-        #                                                 dataset.output_shapes)
-        # self.training_init_op = self.iterator.make_initializer(dataset)
+        self.iterator = tf.data.Iterator.from_structure(self.dataset.output_types,
+                                                        self.dataset.output_shapes)
+        self.init_op = self.iterator.make_initializer(self.dataset)
 
     @staticmethod
     def parser(record):
-        # TODO
-        pass
-        # return image, label
+        keys_to_features = {
+            'label': tf.FixedLenFeature((), tf.int64),
+            'image_raw': tf.FixedLenFeature((), tf.string)
+        }
+        parsed = tf.parse_single_example(record, keys_to_features)
+        image = tf.decode_raw(parsed['image_raw'], tf.uint8)
+        image = tf.reshape(image, [32,32,3])
+        label = parsed['label']
+        image = tf.cast(image, tf.float32)
+
+        return image, label
 
     def initialize(self, sess):
-        sess.run(self.training_init_op)
+        sess.run(self.init_op)
 
     def get_input(self):
         return self.iterator.get_next()

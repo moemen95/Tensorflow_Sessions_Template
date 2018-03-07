@@ -12,7 +12,6 @@ import argparse
 from utils.config import process_config
 
 from agents import *
-from models import *
 
 
 def main():
@@ -32,9 +31,11 @@ def main():
     agent_class = globals()[config.agent]
 
     # Create the Agent and pass all the configuration to it then run it..
-    agent = agent_class(model_class, config)
-    agent.run()
-    agent.finalize()
+    agent = agent_class(config)
+    try:
+        agent.run()
+    except KeyboardInterrupt:
+        agent.finalize()
 
 
 if __name__ == '__main__':
