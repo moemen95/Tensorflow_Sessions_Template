@@ -3,8 +3,8 @@ import numpy as np
 from tqdm import tqdm
 import time
 
-from data_loaders.session_data_loaders import BaselineCifar100Loader
-from data_loaders.session_data_loaders import Cifar100IMGLoader
+from data_loaders.cifar100_loaders import BaselineCifar100Loader
+from data_loaders.cifar100_loaders import Cifar100IMGLoader
 from models.baseline_cifar import Cifar
 from utils.metrics import FPSMeter
 
@@ -27,6 +27,8 @@ class Config:
     x_test_filenames = 'data/cifar-100-python/x_test_filenames.pkl'
 
     batch_size = 8
+
+    tfrecord_data = ['cifar-10-batches-py/data_batch_1_dir/data.tfrecords']
 
 
 def test():
@@ -51,7 +53,7 @@ def test():
     print(tf.get_collection('inputs'))
     print(tf.get_collection('out'))
 
-    is_training, x_pl, y_pl = tf.get_collection('inputs')
+    x_pl, y_pl, is_training = tf.get_collection('inputs')
 
     out = tf.get_collection('out')
     out = out[0]

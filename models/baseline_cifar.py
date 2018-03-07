@@ -1,19 +1,19 @@
 import tensorflow as tf
 
 
-class Cifar:
+class BaselineCifar:
     def __init__(self, config):
         self.config = config
 
     def init_input(self, x, y):
         with tf.variable_scope('inputs'):
             self.is_training = tf.placeholder(tf.bool, name='Training_flag')
-            tf.add_to_collection('inputs', self.is_training)
 
         self.x = x
         self.y = y
         tf.add_to_collection('inputs', self.x)
         tf.add_to_collection('inputs', self.y)
+        tf.add_to_collection('inputs', self.is_training)
 
     def init_network(self):
         with tf.variable_scope('network'):

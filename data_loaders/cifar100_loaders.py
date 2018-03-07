@@ -1,3 +1,14 @@
+"""
+This class will contain different loaders for cifar 100 dataset
+# Techniques
+# FIT in ram
+# - load numpys in the graph
+# - generator python
+
+# Doesn't fit in ram
+# - load files but in tfrecords format
+# - load files from disk using dataset api
+"""
 import pickle
 
 from tqdm import tqdm
@@ -8,7 +19,8 @@ import numpy as np
 
 class BaselineCifar100Loader:
     """
-
+    Manual Loading
+    Using placeholders and python generators
     """
 
     def __init__(self, config):
@@ -69,7 +81,7 @@ class BaselineCifar100Loader:
 
 class Cifar100IMGLoader:
     """
-
+    DataSetAPI - Load Imgs from the disk
     """
 
     def __init__(self, config):
@@ -125,13 +137,46 @@ class Cifar100IMGLoader:
 
 
 class Cifar100TFRecord:
-    pass
+    """
+        DataSetAPI - Load TFRecords from the disk
+    """
 
-# Techniques
-# FIT in ram
-# - load numpys in the graph
-# - generator python
+    def __init__(self, config):
+        self.config = config
 
-# Doesn't fit in ram
-# - load files but in tfrecords format
-# - load files from disk using dataset api
+        # TODO
+        # initialize the dataset
+
+        # self.iterator = tf.data.Iterator.from_structure(dataset.output_types,
+        #                                                 dataset.output_shapes)
+        # self.training_init_op = self.iterator.make_initializer(dataset)
+
+    @staticmethod
+    def parser(record):
+        # TODO
+        pass
+        # return image, label
+
+    def initialize(self, sess):
+        sess.run(self.training_init_op)
+
+    def get_input(self):
+        return self.iterator.get_next()
+
+
+class Cifar100Numpy:
+    """
+        DataSetAPI - Load Numpys from the disk
+    """
+
+    def __init__(self, config):
+        self.config = config
+
+        # TODO
+
+    def initialize(self, sess, is_train):
+        # TODO
+        pass
+
+    def get_input(self):
+        return self.iterator.get_next()

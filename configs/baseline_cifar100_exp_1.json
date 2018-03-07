@@ -1,0 +1,23 @@
+{
+  "exp_name": "cifar_exp_1",
+
+  "agent": "Cifar100Agent",
+  "model": "BaselineCifar",
+  "operation": "train",
+
+  "num_classes": 100,
+  "num_channels": 3,
+  "image_height": 32,
+  "image_width": 32,
+
+  "learning_rate": 1e-4,
+
+  "batch_size": 8,
+  "max_epoch": 5,
+
+  "data_loader": "Cifar100Numpy",
+  "x_train": "",
+  "y_train": "",
+  "x_test": "",
+  "y_test": ""
+}
