@@ -162,7 +162,7 @@ class Cifar100TFRecord:
         }
         parsed = tf.parse_single_example(record, keys_to_features)
         image = tf.decode_raw(parsed['image_raw'], tf.uint8)
-        image = tf.reshape(image, [32,32,3])
+        image = tf.reshape(image, [32, 32, 3])
         label = parsed['label']
         image = tf.cast(image, tf.float32)
 
@@ -183,11 +183,44 @@ class Cifar100Numpy:
     def __init__(self, config):
         self.config = config
 
-        # TODO
+        self.x_train = np.load(config.x_train)
+        self.y_train = np.load(config.y_train)
+        self.x_test = np.load(config.x_test)
+        self.y_test = np.load(config.y_test)
+
+        print("x_train shape: {} dtype: {}".format(self.x_train.shape, self.x_train.dtype))
+        print("y_train shape: {} dtype: {}".format(self.y_train.shape, self.y_train.dtype))
+        print("x_test shape: {} dtype: {}".format(self.x_test.shape, self.x_test.dtype))
+        print("y_test shape: {} dtype: {}".format(self.y_test.shape, self.y_test.dtype))
+
+        self.train_len = self.x_train.shape[0]
+        self.test_len = self.x_test.shape[0]
+
+        self.num_iterations_train = (self.train_len + self.config.batch_size - 1) // self.config.batch_size
+        self.num_iterations_test = (self.test_len + self.config.batch_size - 1) // self.config.batch_size
+
+        self.imgs_placeholder = tf.placeholder(tf.float32,
+                                               [None, config.image_height, config.image_width, config.num_channels])
+        self.labels_placeholder = tf.placeholder(tf.int64, [None, ])
+
+        self.dataset = tf.data.Dataset.from_tensor_slices((self.imgs_placeholder, self.labels_placeholder))
+        self.dataset = self.dataset.batch(self.config.batch_size)
+
+        self.iterator = tf.data.Iterator.from_structure(self.dataset.output_types,
+                                                        self.dataset.output_shapes)
+
+        self.init_op = self.iterator.make_initializer(self.dataset)
 
     def initialize(self, sess, is_train):
-        # TODO
-        pass
+        if is_train:
+            idx = np.random.choice(self.train_len, self.train_len, replace=False)
+            self.x_train = self.x_train[idx]
+            self.y_train = self.y_train[idx]
+            sess.run(self.init_op, feed_dict={self.imgs_placeholder: self.x_train,
+                                              self.labels_placeholder: self.y_train})
+        else:
+            sess.run(self.init_op, feed_dict={self.imgs_placeholder: self.x_test,
+                                              self.labels_placeholder: self.y_test})
 
     def get_input(self):
         return self.iterator.get_next()

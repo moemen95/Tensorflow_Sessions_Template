@@ -16,8 +16,8 @@
   "max_epoch": 5,
 
   "data_loader": "Cifar100Numpy",
-  "x_train": "",
-  "y_train": "",
-  "x_test": "",
-  "y_test": ""
+  "x_train": "data/cifar-100-python/x_train.npy",
+  "y_train": "data/cifar-100-python/y_train.npy",
+  "x_test": "data/cifar-100-python/x_test.npy",
+  "y_test": "data/cifar-100-python/y_test.npy"
 }
