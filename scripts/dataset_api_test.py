@@ -1,3 +1,7 @@
+import sys
+
+sys.path.extend(['..'])
+
 import tensorflow as tf
 import numpy as np
 from tqdm import tqdm
@@ -5,7 +9,7 @@ import time
 
 from data_loaders.cifar100_loaders import BaselineCifar100Loader
 from data_loaders.cifar100_loaders import Cifar100IMGLoader
-from models.baseline_cifar import Cifar
+from models.baseline_cifar import BaselineCifar
 from utils.metrics import FPSMeter
 
 
@@ -18,17 +22,17 @@ class Config:
     learning_rate = 1e-3
     summary_dir = './exp_1'
 
-    x_train = 'data/cifar-100-python/x_train.npy'
-    y_train = 'data/cifar-100-python/y_train.npy'
-    x_test = 'data/cifar-100-python/x_test.npy'
-    y_test = 'data/cifar-100-python/y_test.npy'
+    x_train = '../data/cifar-100-python/x_train.npy'
+    y_train = '../data/cifar-100-python/y_train.npy'
+    x_test = '../data/cifar-100-python/x_test.npy'
+    y_test = '../data/cifar-100-python/y_test.npy'
 
-    x_train_filenames = 'data/cifar-100-python/x_train_filenames.pkl'
-    x_test_filenames = 'data/cifar-100-python/x_test_filenames.pkl'
+    x_train_filenames = '../data/cifar-100-python/x_train_filenames.pkl'
+    x_test_filenames = '../data/cifar-100-python/x_test_filenames.pkl'
 
     batch_size = 8
 
-    tfrecord_data = ['cifar-10-batches-py/data_batch_1_dir/data.tfrecords']
+    tfrecord_data = ['../data/cifar-100-python/train.tfrecords']
 
 
 def test():
@@ -39,7 +43,7 @@ def test():
     # data_loader = BaselineCifar100Loader(Config)
     data_loader = Cifar100IMGLoader(Config)
 
-    model = Cifar(Config)
+    model = BaselineCifar(Config)
 
     x, y = data_loader.get_input()
 
