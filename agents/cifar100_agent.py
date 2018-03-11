@@ -38,6 +38,9 @@ class Cifar100Agent:
         # Saver
         self.saver = tf.train.Saver(max_to_keep=5, save_relative_paths=True)
 
+        # load the model
+        self.load()
+
         # Summarizer
         self.summarizer = DefinedSummarizer(self.sess, self.config.summary_dir,
                                             ['train/loss_per_epoch', 'train/acc_per_epoch'])
@@ -54,34 +57,35 @@ class Cifar100Agent:
         :return:
         """
 
-        # initialize dataset
-        self.data_loader.initialize(self.sess, is_train=True)
-
         x, y, is_training = tf.get_collection('inputs')
         train_step, loss_node, acc_node = tf.get_collection('train')
 
         for epoch in range(self.model.global_epoch_tensor.eval(self.sess), self.config.max_epoch, 1):
 
+            # initialize dataset
+            self.data_loader.initialize(self.sess, is_train=True)
+
             # initialize tqdm
-            tt = tqdm(range(self.data_loader.num_iterations_training), total=self.data_loader.num_iterations_training,
+            tt = tqdm(range(self.data_loader.num_iterations_train), total=self.data_loader.num_iterations_train,
                       desc="epoch-{}-".format(epoch))
 
             loss_per_epoch = AverageMeter()
             acc_per_epoch = AverageMeter()
 
+            # Iterate over batches
             for cur_it in tt:
                 _, loss, acc, _ = self.sess.run([train_step, loss_node, acc_node, self.model.global_step_inc],
-                                             feed_dict={is_training: True})
+                                                feed_dict={is_training: True})
 
                 loss_per_epoch.update(loss)
                 acc_per_epoch.update(acc)
 
             self.sess.run(self.model.global_epoch_inc)
 
-            #summarize
+            # summarize
             summaries_dict = {'train/loss_per_epoch': loss_per_epoch.val,
                               'train/acc_per_epoch': acc_per_epoch.val}
-            self.summarizer.summarize(self.model.global_step_tensor, summaries_dict)
+            self.summarizer.summarize(self.model.global_step_tensor.eval(self.sess), summaries_dict)
 
             self.save()
 

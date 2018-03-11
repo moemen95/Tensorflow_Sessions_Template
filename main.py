@@ -34,6 +34,7 @@ def main():
     agent = agent_class(config)
     try:
         agent.run()
+        agent.finalize()
     except KeyboardInterrupt:
         agent.finalize()
 

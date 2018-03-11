@@ -65,6 +65,7 @@ class BaselineCifar:
         tf.add_to_collection('train', self.acc)
 
     def build(self, x, y):
+        self.init_helper_variables()
         self.init_input(x, y)
         self.init_network()
         self.init_ops()
