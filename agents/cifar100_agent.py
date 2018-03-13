@@ -35,6 +35,9 @@ class Cifar100Agent:
         self.model = model_class(config)
         self.model.build(x, y)
 
+        init = tf.global_variables_initializer()
+        self.sess.run(init)
+
         # Saver
         self.saver = tf.train.Saver(max_to_keep=5, save_relative_paths=True)
 
@@ -44,9 +47,6 @@ class Cifar100Agent:
         # Summarizer
         self.summarizer = DefinedSummarizer(self.sess, self.config.summary_dir,
                                             ['train/loss_per_epoch', 'train/acc_per_epoch'])
-
-        init = tf.global_variables_initializer()
-        self.sess.run(init)
 
     def run(self):
         self.train()
