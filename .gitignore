@@ -106,3 +106,7 @@ ENV/
 # data
 data/cifar-100-python/
 data/mnist_data/
+
+# experiments
+experiments/
+req.txt
