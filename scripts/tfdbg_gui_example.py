@@ -1,3 +1,7 @@
+import os
+os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
+os.environ["CUDA_VISIBLE_DEVICES"] = "0"
+
 import tensorflow as tf
 
 from tensorflow.examples.tutorials.mnist import input_data
@@ -91,7 +95,7 @@ class Config:
     ui_type = 'curses'
     fake_data = False
     debug = False
-    tensorboard_debug_address = 'localhost:6064'
+    tensorboard_debug_address = 'localhost:8810'
 
 
 if __name__ == "__main__":

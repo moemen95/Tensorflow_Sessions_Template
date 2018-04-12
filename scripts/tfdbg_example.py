@@ -84,7 +84,7 @@ class Config:
     hidden_size = 500
     num_classes = 10
     seed = 42
-    max_steps = 10
+    max_steps = 1000
     batch_size = 100
     learning_rate = 0.025
     data_dir = '../data/mnist_data'
