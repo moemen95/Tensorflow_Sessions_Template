@@ -90,7 +90,7 @@ class Config:
     data_dir = '../data/mnist_data'
     ui_type = 'curses'
     fake_data = False
-    debug = True
+    debug = False
     tensorboard_debug_address = 'localhost:6064'
 
 
