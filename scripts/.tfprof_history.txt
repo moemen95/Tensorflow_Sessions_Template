@@ -1,0 +1,8 @@
+graph
+help
+advise
+code
+code -max_depth 5
+scope -select device,params -account_type_regexes .*ps.*task:0.* -max_depth 1
+scope -select 0,params -account_type_regexes .*ps.*task:0.* -max_depth 1
+scope params -account_type_regexes .*ps.*task:0.* -max_depth 1
